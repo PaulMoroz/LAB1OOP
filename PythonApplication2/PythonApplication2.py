@@ -16,8 +16,8 @@ lines = file.readlines()
 field = []
 for line in lines:
 	field.append(list(map(int, line.split(" "))))
-graph = [[] for j in range(466)]
-smth = 1
+graph = [[] for j in range(461)]
+smth = 0
 
 for i in range(21):
 	for j in range(21):
@@ -25,22 +25,21 @@ for i in range(21):
 			if i>= 1:
 				if field[i-1][j]==1:
 					graph[smth-21].append(smth)
-			if i<= 20 :
+			if i< 20 :
 				if field[i+1][j]==1:
 					graph[smth+21].append(smth)
 
 			if j>= 1:
 				if field[i][j-1]==1:
 					graph[smth-1].append(smth)
-			if j<= 20 :
+			if j< 20 :
 				if field[i][j+1]==1:
 					graph[smth+1].append(smth)
 		smth+=1
 
 
 def to_coords(x):
-	return [x//21-1+(x%21>0),(x%21 if x%21!=0 else 21) -1]
-	#return [x//21+(x%21>0),x%21 if x%21!=0 else 21]
+	return [x//21,x%21]
 
 
 def astar(start,finish):
@@ -68,7 +67,7 @@ def astar(start,finish):
 	return list(path)
 
 def toInt(row,col):
-	return (row-1)*21+col
+	return (row)*21+col
 
 
 
@@ -88,6 +87,15 @@ def winlose(param):
 	pygame.display.update()
 
 
+def find_side(a,b):
+	if a[0]-b[0]==1:
+		return "LEFT"
+	if a[0]-b[0]==-1:
+		return "RIGHT"
+	if a[1]-b[1]==1:
+		return "UP"
+	if a[1]-b[1]==-1:
+		return "DOWN"
 
 class sciensist:
 	textures = {"LEFT":pygame.image.load("sciencistLeft.png"),"RIGHT":pygame.image.load("sciencistRight.png"),"UP":pygame.image.load("sciencistUp.png"),"DOWN":pygame.image.load("sciencistDown.png")}
@@ -111,6 +119,7 @@ class sciensist:
 		elif self.astar!=[]:
 			next_point = to_coords(self.astar.pop(0))
 			if field[next_point[1]][next_point[0]]==1:
+				self.side = ([self.x,self.y  ],next_point)
 				self.x,self.y = next_point[1],next_point[0]
 		#	else:
 		#		self.astar = astar(toInt(self.y,self.x),finishes[random.randint(1,5)])
@@ -118,6 +127,7 @@ class sciensist:
 		elif self.astar == [] and self.thing == 10:
 			self.thing = 0
 			self.astar = astar(toInt(self.y,self.x),finishes[random.randint(1,5)])
+			t = 0
 		else:
 			self.do_thing()
 
@@ -132,7 +142,7 @@ class sciensist:
 
 scientists.append(sciensist(13,2))
 scientists.append(sciensist(18,18))
-scientists.append(sciensist(8,13))
+scientists.append(sciensist(8,12))
 scientists.append(sciensist(18,13))
 scientists.append(sciensist(19,8))
 
@@ -220,10 +230,10 @@ def draw():
 		pygame.display.update()
 
 win.fill((255,255,255))
-echo("You're playing for coronavirus.\nYour goal is escape from antivirus lab. \nTemperature of infected person raises by 0.2 degree per 3 seconds.\nIf it reaches 38.6 degrees, you lose. " if param=="WIN" else "VIRUS WASN'T ESCAPE FROM LAB((((",100,450,48,(0,0,0))
+echo("Legend of game is in readme",100,450,48,(0,0,0))
 pygame.display.update()
 
-
+time.sleep(3)
 while True:
 	pygame.time.delay(100)
 	move_all()
